@@ -1,0 +1,27 @@
+# @package _global_
+# Fragment-constrained generation: uses safe_fragment (infill datasets) + lflexmdm collators.
+defaults:
+  - safe_fragment
+  - /collator@datamodule.dataset_managers.train.lm.collator: default_lflexmdm
+  - /collator@datamodule.dataset_managers.val.infill_prediction.collator: infill_pred_lflexmdm
+  - /collator@datamodule.dataset_managers.predict.infill_prediction.collator: infill_pred_lflexmdm
+  - /collator@datamodule.dataset_managers.test.infill_prediction.collator: infill_pred_lflexmdm
+
+datamodule:
+  print_batch_fn: lflexmdm.datamodule_flexmdm.print_batch_flexmdm
+  dataset_managers:
+    val:
+      infill_prediction:
+        collator:
+          add_bos: false
+    predict:
+      infill_prediction:
+        collator:
+          add_bos: false
+    test:
+      infill_prediction:
+        collator:
+          add_bos: false
+
+tags:
+  dataset: safe_fragment_${molgen_task_name}

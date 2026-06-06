@@ -1,0 +1,9 @@
+# @package _global_
+
+global_components:
+  noise_schedule:
+    _target_: lflexmdm.schedules.FlexMDMSchedule
+    schedule_type: ${schedule_type}
+
+tags:
+  noise_schedule: ${schedule_type}

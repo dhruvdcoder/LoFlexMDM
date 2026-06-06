@@ -1,0 +1,14 @@
+# @package _global_
+
+model:
+  b_um: 1.0
+
+aux_model:
+  b_um: 1.0
+
+loss:
+  regularizer_weight: 1.0
+
+global_components:
+  noise_schedule:
+    a_min: 1.0

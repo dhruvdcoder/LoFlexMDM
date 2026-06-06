@@ -1,0 +1,6 @@
+# @package _global_
+aux_model:
+  d_model: 768
+  num_layers: 8
+  nhead: 8
+  rotary_emb_dim: ${min_int:${eval:${.d_model}//${.nhead}},64}

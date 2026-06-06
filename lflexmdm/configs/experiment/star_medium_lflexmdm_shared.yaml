@@ -1,0 +1,81 @@
+# @package _global_
+defaults:
+  - override /datamodule: star_medium_lflexmdm
+  - override /noise_schedule: lflexmdm_kuma
+  - override /model_type: lflexmdm_seq2seq_shared
+  - override /model: ddit_lflexmdm_kuma_shared
+
+per_device_batch_size: 64
+global_batch_size: 64
+input_block_size: 36
+block_size: 16
+monitored_metric: val/lm/accumulated_loss
+# Rate head parameters
+rate_head_type: scalar
+rate_head_use_mlp: true
+num_rate_bins: 1000
+min_rate: 1.01 # only applies to aux_min rate for b params
+max_rate: 100.0
+schedule_type: simplified-kuma
+scalar_fn: softplus
+
+predictor:
+  _target_: lflexmdm.predictor_tau_leaping_kuma.TauLeapingPredictor
+  max_steps: 500
+
+loss:
+  _target_: lflexmdm.loss_flexmdm_kuma.LFlexMDMLoss
+  regularizer_weight: 1.0
+
+datamodule:
+  print_batch_fn: lflexmdm.datamodule_flexmdm.print_batch_flexmdm
+
+model:
+  min_rate: 0.0
+  scalar_fn: ${oc.select:scalar_fn,softplus}
+
+aux_model:
+  scalar_fn: ${oc.select:scalar_fn,softplus}
+
+global_components:
+  tokenizer:
+    _target_: xlm.datamodule.SimpleSpaceTokenizer.for_numbers
+    vocab_size: 20 # 20 (easy,medium), 56 (hard)
+  noise_schedule:
+    a_min: 5.00
+
+trainer:
+  max_steps: 80000
+  val_check_interval: null
+  num_sanity_val_steps: 3
+  check_val_every_n_epoch: 2
+
+log_predictions:
+  _target_: xlm.log_predictions.LogPredictions
+  fields_to_keep_in_output:
+    - text
+    - truth
+  inject_target: target_ids
+  writers:
+    - file
+    - logger
+
+callbacks:
+  checkpoint_monitor:
+    monitor: val/lm/accumulated_loss
+
+optimizer:
+  lr: 0.0001
+
+#lr_scheduler:
+#  name: "constant"
+#  num_warmup_steps: 500
+#  num_training_steps: ${trainer.max_steps}
+#  monitor: "train/loss"
+lr_scheduler:
+  name: "cosine_with_min_lr"
+  min_lr: 1e-5
+  num_warmup_steps: 500
+  num_cycles: 3.0
+  num_training_steps: ${trainer.max_steps}
+  monitor: "train/loss"
