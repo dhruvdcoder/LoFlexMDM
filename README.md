@@ -1,3 +1,5 @@
+Official implementation for [Insertion Based Sequence Generation with Learnable Order Dynamics](https://arxiv.org/pdf/2602.18695)
+
 # Setup
 
 Create a new environment using conda.
@@ -25,9 +27,7 @@ HYDRA_FULL_ERROR=1
 OC_CAUSE=1
 ```
 
-# Pretrained weights (Hugging Face Hub)
-
-Bracket-SAFE molgen checkpoints (EMA, step 50k). Paper: [Variable-Length Discrete Diffusion](https://arxiv.org/pdf/2602.18695).
+# Pretrained weights 
 
 | Model                           | Hub repo                                                                                                        | Hydra experiment                      |
 |---------------------------------|-----------------------------------------------------------------------------------------------------------------|---------------------------------------|
@@ -37,18 +37,16 @@ Bracket-SAFE molgen checkpoints (EMA, step 50k). Paper: [Variable-Length Discret
 | LoFlexMDM xtiny (6-layer aux)   | [LoFlexMDM-xTiny-BracketSAFE](https://huggingface.co/dhruveshpatel/LoFlexMDM-xTiny-BracketSAFE)                 | `[safe_lflexmdm,b_um_1_a1,xtiny_aux]` |
 | LoFlexMDM shared backbone       | [LoFlexMDM-Medium-Shared-BracketSAFE](https://huggingface.co/dhruveshpatel/LoFlexMDM-Medium-Shared-BracketSAFE) | `[safe_lflexmdm_shared,b_um_1_a1]`    |
 
-Eval loads weights with `++hub.repo_id=...` (downloads `model.safetensors` from Hub). STAR graph-traversal checkpoints are not on Hub; use local Lightning checkpoints if needed.
+See the commands provided below to load the checkoints for evaluation. 
 
 # Eval
 
-## Paper best hyperparameters (Bracket-SAFE molgen)
-
-From the paper Table 1 grid (see also Hub model cards):
+## Sampling hyperparams
 
 - `predictor.max_steps=1024`
 - `predictor.confidence=top_prob` (use `null` for no confidence decoding)
 - `predictor.top_p=0.5` (best quality; paper also reports `0.9` and `1.0`)
-- LFlexMDM runs use `b_um_1_a1` (fixed unmask rate)
+- LoFlexMDM runs use `b_um_1_a1` (fixed unmask rate)
 
 
 ## De novo molecule generation
@@ -80,7 +78,7 @@ for SEED in 42 231 10234; do
 done
 ```
 
-**(Ours) LFlexMDM on molecule generation**
+**(Ours) LoFlexMDM on molecule generation**
 
 ```bash
 DATASET=safe
@@ -146,7 +144,7 @@ for TASK in motif_extension scaffold_decoration superstructure_generation linker
 done
 ```
 
-**(Ours) LFlexMDM fragment eval**
+**(Ours) LoFlexMDM fragment eval**
 
 ```bash
 BACKBONE=separate   # or shared
