@@ -11,9 +11,6 @@ pip install -r requirements.txt
 Create `.env` file in the root directory from where you plan to run the experiments:
 
 ```bash
-# wandb
-WANDB_ENTITY=???
-WANDB_PROJECT=???
 # paths to appropriate directories
 DATA_DIR=data
 HF_HOME=hf_home
@@ -26,12 +23,6 @@ PROJECT_ROOT=.
 # hydra
 HYDRA_FULL_ERROR=1
 OC_CAUSE=1
-# emails from slurm scheduler if applicable
-EMAIL=???
-# torch compile logs
-TORCHDYNAMO_CAPTURE_SCALAR_OUTPUTS=1
-# Hugging Face Hub (for ++hub.repo_id eval)
-# HF_TOKEN=...  or HF_HUB_KEY=...
 ```
 
 # Pretrained weights (Hugging Face Hub)
